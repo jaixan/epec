@@ -1,0 +1,121 @@
+/**
+ * Barre de menu pour l'application.
+ *
+ * Auteur : Étienne Rivard
+ *
+ */
+
+'use client';
+
+import { useState } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { useRouter } from 'next/navigation';
+
+export default function BarreDeMenu() {
+  const routeur = useRouter();
+
+  const [ancrageMenuPrincipal, setAncrageMenuPrincipal] =
+    useState<null | HTMLElement>(null);
+
+  // Fonction pour ouvrir le menu principal.
+  const ouvrirMenuPrincipal = (event: React.MouseEvent<HTMLElement>) => {
+    setAncrageMenuPrincipal(event.currentTarget);
+  };
+
+  // Fonction pour fermer le menu principal.
+  const fermerMenuPrincipal = () => {
+    setAncrageMenuPrincipal(null);
+  };
+
+  // Fonction pour aller à la page des classes.
+  const allerAuxClasses = () => {
+    setAncrageMenuPrincipal(null);
+    routeur.push('/classes');
+  };
+
+  // Fonction pour aller à la page des élèves.
+  const allerAuxEleves = () => {
+    setAncrageMenuPrincipal(null);
+    routeur.push('/eleves');
+  };
+
+  // Fonction pour aller à la page de prise de présences.
+  const allerAPrendreLesPresences = () => {
+    setAncrageMenuPrincipal(null);
+    routeur.push('/presences');
+  };
+
+  return (
+    <AppBar position="static">
+      <Container maxWidth="xl" sx={{ minWidth: '80vw' }}>
+        <Toolbar disableGutters>
+          <Box sx={{ flexGrow: 1 }}>
+            <IconButton
+              size="large"
+              aria-label="menu principal"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={ouvrirMenuPrincipal}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={ancrageMenuPrincipal}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(ancrageMenuPrincipal)}
+              onClose={fermerMenuPrincipal}
+            >
+              <MenuItem key="classes" onClick={allerAuxClasses}>
+                <Typography textAlign="center">Classes</Typography>
+              </MenuItem>
+              <MenuItem key="eleves" onClick={allerAuxEleves}>
+                <Typography textAlign="center">Élèves</Typography>
+              </MenuItem>
+              <MenuItem key="presences" onClick={allerAPrendreLesPresences}>
+                <Typography textAlign="center">
+                  Prendre les présences
+                </Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href=""
+            sx={{
+              mr: 2,
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            EPEC
+          </Typography>
+          <Box sx={{ flexGrow: 0, display: { md: 'flex' } }}></Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+}
