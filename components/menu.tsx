@@ -8,6 +8,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -17,11 +18,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useRouter } from 'next/navigation';
 
+/**
+ * Composant pour la barre de menu.
+ * @returns Le JSX de la barre de menu.
+ */
 export default function BarreDeMenu() {
   const routeur = useRouter();
 
+  // État pour l'ancrage du menu principal. Sert à afficher ou cacher le menu.
   const [ancrageMenuPrincipal, setAncrageMenuPrincipal] =
     useState<null | HTMLElement>(null);
 
@@ -109,6 +114,28 @@ export default function BarreDeMenu() {
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
+              display: { xs: 'none', sm: 'block' },
+            }}
+          >
+            Élèves présents en classe
+          </Typography>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href=""
+            sx={{
+              mr: 2,
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+              display: {
+                xs: 'block',
+                sm: 'none',
+              },
             }}
           >
             EPEC

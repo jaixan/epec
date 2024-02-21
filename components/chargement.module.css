@@ -1,0 +1,47 @@
+/**
+ * Page de chargement - Styles
+ *
+ * Auteur: Étienne Rivard
+ * 
+ * Code partiellement généré par : OpenAI. (2023). 
+ * ChatGPT (version 19 février 2024) [Modèle massif de langage]. 
+ * https://chat.openai.com/chat
+**/
+
+.loading_page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.loading_container {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.loading_container p {
+  font-size: 1.6em;
+  margin-left: 10px;
+}
+
+.loading_animation {
+  width: 30px;
+  height: 30px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
