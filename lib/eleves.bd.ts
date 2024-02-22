@@ -52,3 +52,12 @@ export async function enregistreEleve(eleve: IEleve) {
   );
   stmt.run(eleve.numero_da, eleve.nom, eleve.prenom, eleve.photo);
 }
+
+/**
+ * Fonction pour supprimer un élève.
+ * @param id L'identifiant de l'élève à supprimer.
+ */
+export async function supprimerEleve(id: number) {
+  const stmt = db.prepare('DELETE FROM eleves WHERE id = ?');
+  stmt.run(id);
+}

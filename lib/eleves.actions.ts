@@ -1,7 +1,7 @@
 'use server';
 
 import IEleve, { IEleveValidation } from '@/models/eleves.models';
-import { enregistreEleve } from './eleves.bd';
+import { enregistreEleve, supprimerEleve } from './eleves.bd';
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -19,7 +19,7 @@ function estNumeroDaInvalide(numeroDa: string | null | undefined) {
 /**
  * Traite l'ajout d'un élève venant du formulaire.
  *
- * @param etatPrecedent un élève
+ * @param etatPrecedent les messages d'erreurs par champ
  * @param formData les données du formulaire
  * @returns Un message d'erreur ou rien.
  */
@@ -57,6 +57,28 @@ export async function ajouterEleve(
   };
 
   await enregistreEleve(eleve);
+
+  // Revalidation de la page pour mettre à jour la liste des élèves.
+  revalidatePath('/eleves');
+
+  // Redirection vers la liste des élèves.
+  redirect('/eleves');
+}
+
+/**
+ * Traite la suppression d'un élève
+ *
+ * @param etatPrecedent un élève
+ * @param formData les données du formulaire
+ * @returns Un message d'erreur ou rien.
+ */
+export async function supprimerEleveAction(
+  state: IEleveValidation | void,
+  formData: FormData
+): Promise<IEleveValidation | void> {
+  const eleveid: string | null = formData.get('eleveid') as string | null;
+
+  await supprimerEleve(+eleveid!);
 
   // Revalidation de la page pour mettre à jour la liste des élèves.
   revalidatePath('/eleves');

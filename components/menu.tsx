@@ -59,7 +59,7 @@ export default function BarreDeMenu() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color="secondary">
       <Container maxWidth="xl" sx={{ minWidth: '80vw' }}>
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1 }}>

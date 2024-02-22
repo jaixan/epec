@@ -21,11 +21,18 @@ export const theme = createTheme({
     },
     text: {
       primary: '#EFECEC',
-      secondary: '#FFFFFF',
       disabled: 'rgba(70,38,38,0.5)',
     },
   },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#b479b2',
+          color: '#000000',
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
