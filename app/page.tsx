@@ -18,19 +18,19 @@ import Link from 'next/link';
 
 const elementsDeMenu = [
   {
-    image: '/classes.webp',
+    image: '/classes.jpg',
     alt: 'Classes',
     titre: 'Classes',
     lien: '/classes',
   },
   {
-    image: '/eleves.webp',
+    image: '/eleves.jpg',
     alt: 'Élèves',
     titre: 'Élèves',
     lien: '/eleves',
   },
   {
-    image: '/presences.webp',
+    image: '/presences.jpg',
     alt: 'Prendre les présences',
     titre: 'Prendre les présences',
     lien: '/prendre-les-presences',
