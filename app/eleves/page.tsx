@@ -6,10 +6,9 @@
 
 import classes from './page.module.css';
 import { obtenirEleves } from '@/lib/eleves.bd';
+import { Suspense } from 'react';
 import Chargement from '@/components/chargement';
 import ListeEleves from '@/components/liste_eleves';
-
-import { Suspense } from 'react';
 
 /**
  * Obtient la liste des élèves et génère le JSX pour les afficher.
@@ -19,6 +18,7 @@ import { Suspense } from 'react';
  */
 async function Eleves() {
   const eleves = await obtenirEleves();
+  console.log(eleves);
   return <ListeEleves eleves={eleves} />;
 }
 
@@ -30,7 +30,7 @@ export default async function PageEleves() {
   return (
     <div>
       <h1 className={classes.entete}>Élèves</h1>
-      <Suspense fallback={<Chargement message="Chargement des élèves..." />}>
+      <Suspense fallback={<Chargement message={'Chargement...'} />}>
         <Eleves />
       </Suspense>
     </div>

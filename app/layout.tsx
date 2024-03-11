@@ -12,6 +12,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import Menu from '../components/menu';
+import { CssBaseline } from '@mui/material';
 
 /*
  * Les métadonnées de l'application.
@@ -39,8 +40,12 @@ export default function RootLayout({
           <header>
             <Menu />
           </header>
+
           {/* Le thème de l'application pour la librairie MaterialUI. */}
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {children}
+          </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

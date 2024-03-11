@@ -1,3 +1,4 @@
+'use server';
 /**
  * Fonctions vers la base de données des élèves.
  *
@@ -24,9 +25,11 @@ export async function obtenirEleves(): Promise<IEleve[]> {
  * @param id L'identifiant de l'élève.
  * @returns L'élève correspondant à l'identifiant.
  */
-export function obtenirEleveParId(id: number): IEleve {
+export async function obtenirEleveParId(id: number): Promise<IEleve> {
   const stmt = db.prepare('SELECT * FROM eleves WHERE id = ?');
-  return stmt.get(id) as IEleve;
+  return new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
+    return stmt.get(id) as IEleve;
+  });
 }
 
 /**
@@ -51,6 +54,17 @@ export async function enregistreEleve(eleve: IEleve) {
     'INSERT INTO eleves (numero_da, nom, prenom, photo) VALUES (?, ?, ?, ?)'
   );
   stmt.run(eleve.numero_da, eleve.nom, eleve.prenom, eleve.photo);
+}
+
+/**
+ * Fonction pour enregistrer les modifications à un élève.
+ * @param eleve L'élève à enregistrer.
+ */
+export async function modifierEleve(eleve: IEleve) {
+  const stmt = db.prepare(
+    'UPDATE eleves SET numero_da = ?, nom = ?, prenom = ? WHERE id = ?'
+  );
+  stmt.run(eleve.numero_da, eleve.nom, eleve.prenom, eleve.id);
 }
 
 /**

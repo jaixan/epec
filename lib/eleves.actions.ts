@@ -1,7 +1,7 @@
 'use server';
 
 import IEleve, { IEleveValidation } from '@/models/eleves.models';
-import { enregistreEleve, supprimerEleve } from './eleves.bd';
+import { enregistreEleve, modifierEleve, supprimerEleve } from './eleves.bd';
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -57,6 +57,52 @@ export async function ajouterEleve(
   };
 
   await enregistreEleve(eleve);
+
+  // Revalidation de la page pour mettre à jour la liste des élèves.
+  revalidatePath('/eleves');
+
+  // Redirection vers la liste des élèves.
+  redirect('/eleves');
+}
+
+/**
+ * Traite la mise à jour d'un élève venant du formulaire.
+ *
+ * @param etatPrecedent les messages d'erreurs par champ
+ * @param formData les données du formulaire
+ * @returns Un message d'erreur ou rien.
+ */
+export async function mettreAJourEleve(
+  state: IEleveValidation | void,
+  formData: FormData
+): Promise<IEleveValidation | void> {
+  const eleveid: string | null = formData.get('eleveId') as string | null;
+  const numero_da: string | null = formData.get('numero_da') as string | null;
+  const nom: string | null = formData.get('nom') as string | null;
+  const prenom: string | null = formData.get('prenom') as string | null;
+
+  if (
+    estTexteInvalide(nom) ||
+    estTexteInvalide(prenom) ||
+    estNumeroDaInvalide(numero_da)
+  ) {
+    return {
+      numero_da: estNumeroDaInvalide(numero_da) ? 'Numéro DA invalide' : '',
+      nom: estTexteInvalide(nom) ? 'Nom invalide' : '',
+      prenom: estTexteInvalide(prenom) ? 'Prénom invalide' : '',
+      photo: '',
+    };
+  }
+
+  const eleve: IEleve = {
+    id: +eleveid!,
+    numero_da: +numero_da!,
+    nom: nom!,
+    prenom: prenom!,
+    photo: 'photo',
+  };
+
+  await modifierEleve(eleve);
 
   // Revalidation de la page pour mettre à jour la liste des élèves.
   revalidatePath('/eleves');

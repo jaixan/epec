@@ -18,6 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { themeAppbarBackground } from '@/theme';
 
 /**
  * Composant pour la barre de menu.
@@ -58,8 +59,9 @@ export default function BarreDeMenu() {
     routeur.push('/presences');
   };
 
+  // Le backgroundColor est un hack car le AppBar ne réagit pas au thème.
   return (
-    <AppBar position="static" color="secondary">
+    <AppBar position="static" sx={{ backgroundColor: themeAppbarBackground }}>
       <Container maxWidth="xl" sx={{ minWidth: '80vw' }}>
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1 }}>

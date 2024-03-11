@@ -30,7 +30,7 @@ export interface IEleveValidation {
   nom: string;
   prenom: string;
   photo: string;
-  image: string;
+  image?: string;
 }
 
 /**
@@ -42,4 +42,14 @@ export const eleveValidationVide: IEleveValidation = {
   prenom: '',
   photo: '',
   image: '',
+};
+
+/**
+ * Élève vide.
+ */
+export const eleveVide: IEleve = {
+  numero_da: 0,
+  nom: '',
+  prenom: '',
+  photo: '',
 };

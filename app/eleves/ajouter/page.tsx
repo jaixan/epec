@@ -12,7 +12,7 @@ import { useFormState } from 'react-dom';
 import SelecteurImage from '@/components/selecteur_image';
 import classes from './page.module.css';
 import { ajouterEleve } from '@/lib/eleves.actions';
-import SoumettreEleve from '@/components/eleve_soumettre';
+import BoutonSoumettre from '@/components/bouton_soumettre';
 import { Box, TextField } from '@mui/material';
 import { eleveValidationVide } from '@/models/eleves.models';
 
@@ -61,9 +61,11 @@ export default function PageAjouterEleve() {
           <SelecteurImage
             libelle="Photo de l'élève"
             nom="image"
-            erreur={eleveValidation.image.length > 0}
+            erreur={eleveValidation.image!.length > 0}
           />
-          <p className={classes.actions}>{<SoumettreEleve />}</p>
+          <p className={classes.actions}>
+            {<BoutonSoumettre label="Ajouter un élève" />}
+          </p>
         </form>
       </main>
     </>
