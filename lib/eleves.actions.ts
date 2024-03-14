@@ -80,6 +80,7 @@ export async function mettreAJourEleve(
   const numero_da: string | null = formData.get('numero_da') as string | null;
   const nom: string | null = formData.get('nom') as string | null;
   const prenom: string | null = formData.get('prenom') as string | null;
+  const image: File | null = formData.get('image') as File | null;
 
   if (
     estTexteInvalide(nom) ||
@@ -100,6 +101,7 @@ export async function mettreAJourEleve(
     nom: nom!,
     prenom: prenom!,
     photo: 'photo',
+    image: image || undefined,
   };
 
   await modifierEleve(eleve);

@@ -28,15 +28,12 @@ export async function obtenirEleves(): Promise<IEleve[]> {
 export async function obtenirEleveParId(id: number): Promise<IEleve> {
   const stmt = db.prepare('SELECT * FROM eleves WHERE id = ?');
   return new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-    return stmt.get(id) as IEleve;
+    const eleve = stmt.get(id) as IEleve;
+    return eleve;
   });
 }
 
-/**
- * Fonction pour enregistrer un élève.
- * @param eleve L'élève à enregistrer.
- */
-export async function enregistreEleve(eleve: IEleve) {
+export async function enregistrerPhotoEleve(eleve: IEleve) {
   const extension = eleve.image!.name.split('.').pop();
   const nomFichier = `${eleve.numero_da}.${extension}`;
 
@@ -49,7 +46,16 @@ export async function enregistreEleve(eleve: IEleve) {
     }
   });
 
-  eleve.photo = `/images/eleves/${nomFichier}`;
+  const photo = `/images/eleves/${nomFichier}`;
+  return photo;
+}
+/**
+ * Fonction pour enregistrer un élève.
+ * @param eleve L'élève à enregistrer.
+ */
+export async function enregistreEleve(eleve: IEleve) {
+  eleve.photo = await enregistrerPhotoEleve(eleve);
+
   const stmt = db.prepare(
     'INSERT INTO eleves (numero_da, nom, prenom, photo) VALUES (?, ?, ?, ?)'
   );
@@ -61,10 +67,18 @@ export async function enregistreEleve(eleve: IEleve) {
  * @param eleve L'élève à enregistrer.
  */
 export async function modifierEleve(eleve: IEleve) {
-  const stmt = db.prepare(
-    'UPDATE eleves SET numero_da = ?, nom = ?, prenom = ? WHERE id = ?'
-  );
-  stmt.run(eleve.numero_da, eleve.nom, eleve.prenom, eleve.id);
+  if (eleve.image && eleve.image.size > 0) {
+    eleve.photo = await enregistrerPhotoEleve(eleve);
+    const stmt = db.prepare(
+      'UPDATE eleves SET numero_da = ?, nom = ?, prenom = ?, photo = ? WHERE id = ?'
+    );
+    stmt.run(eleve.numero_da, eleve.nom, eleve.prenom, eleve.photo, eleve.id);
+  } else {
+    const stmt = db.prepare(
+      'UPDATE eleves SET numero_da = ?, nom = ?, prenom = ? WHERE id = ?'
+    );
+    stmt.run(eleve.numero_da, eleve.nom, eleve.prenom, eleve.id);
+  }
 }
 
 /**

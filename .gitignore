@@ -37,3 +37,6 @@ next-env.d.ts
 
 # Base de données
 *.db
+
+# Fichiers téléversés
+/uploads/*

@@ -10,9 +10,9 @@ export const theme = createTheme({
     fontFamily: ['Cutive Mono', 'monospace'].join(','),
   },
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
-      main: '#EAEAEA',
+      main: '#E0E0E0',
     },
   },
 });

@@ -15,6 +15,7 @@ import { eleveValidationVide } from '@/models/eleves.models';
 import { obtenirEleveParId } from '@/lib/eleves.bd';
 import { useEffect, useState } from 'react';
 import BoutonSoumettre from '@/components/bouton_soumettre';
+import SelecteurImage from '@/components/selecteur_image';
 
 /**
  * Propriétés de la page de mise à jour des élèves.
@@ -90,6 +91,7 @@ export default function PageMiseAJourEleve(props: PageMiseAJourEleveProps) {
   const [numero_da, setNumeroDa] = useState(0);
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
+  const [imageUrl, setImageUrl] = useState<string>('');
   const [afficherFormulaire, setAfficherFormulaire] = useState(false);
 
   // Obtenir l'élève par son identifiant.
@@ -99,6 +101,7 @@ export default function PageMiseAJourEleve(props: PageMiseAJourEleveProps) {
       setPrenom(e.prenom);
       setNom(e.nom);
       setAfficherFormulaire(true);
+      setImageUrl(e.photo);
     });
   }, [eleveId]);
 
@@ -152,6 +155,12 @@ export default function PageMiseAJourEleve(props: PageMiseAJourEleveProps) {
                 onChange={(e) => setNom(e.target.value)}
               />
             </Box>
+            <SelecteurImage
+              libelle="Photo de l'élève"
+              nom="image"
+              imageUrl={imageUrl}
+              erreur={eleveValidation.image!.length > 0}
+            />
             <p className={classes.actions}>
               {<BoutonSoumettre label="Modifier l'élève" />}
             </p>

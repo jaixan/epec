@@ -10,17 +10,28 @@
 
 import classes from './selecteur_image.module.css';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import genererImage from './generateur';
+import { Box } from '@mui/material';
 
 /**
  * Propriétés du composant SelecteurImage.
+ * @interface ISelecteurImageProps
+ * @property {string} libelle Le libellé du champ qui est affiché.
+ * @property {string} nom Le nom du champ du formulaire.
+ * @property {boolean} [erreur] Indique si le champ est invalide.
+ * @property {string} [messageErreur] Le message d'erreur à afficher.
+ * @property {string} [imageUrl] L'URL de l'image, utilisé pour afficher l'image sélectionnée auparavant.
+ * @property {string} [inviteGenerateur] L'invite pour le générateur d'image.
  */
 interface ISelecteurImageProps {
   libelle: string;
   nom: string;
   erreur?: boolean;
   messageErreur?: string;
+  imageUrl?: string;
+  inviteGenerateur?: string;
 }
 
 /**
@@ -33,6 +44,14 @@ export default function SelecteurImage(props: ISelecteurImageProps) {
   const [imageSelectionnee, setImageSelectionnee] = useState<
     string | ArrayBuffer | null
   >(null);
+  const [generationEnCours, setGenerationEnCours] = useState(false);
+  const [imageGeneree, setImageGeneree] = useState('');
+
+  useEffect(() => {
+    if (props.imageUrl) {
+      setImageSelectionnee(props.imageUrl);
+    }
+  }, [props.imageUrl]);
 
   // Référence pour le champ de fichier.
   const imageInput = useRef<HTMLInputElement>(null);
@@ -41,6 +60,32 @@ export default function SelecteurImage(props: ISelecteurImageProps) {
   // alors il faut rediriger le clic vers le composant caché.
   function gereClicSelecteur() {
     imageInput.current!.click();
+  }
+
+  /**
+   * Gère l'événement de clic pour générer une image.
+   * @param event L'événement de clic.
+   * @returns void
+   */
+  function gereClicGenererImage(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+
+    if (!props.inviteGenerateur) {
+      return;
+    }
+
+    // On affiche une animation de chargement.
+    setGenerationEnCours(true);
+
+    // On génère une image aléatoire.
+    genererImage({ invite: props.inviteGenerateur }).then((imageUrl) => {
+      // On met à jour l'état de l'image sélectionnée.
+      if (imageUrl) {
+        setImageSelectionnee(imageUrl);
+        setImageGeneree(imageUrl);
+      }
+      setGenerationEnCours(false);
+    });
   }
 
   /**
@@ -75,8 +120,11 @@ export default function SelecteurImage(props: ISelecteurImageProps) {
       <label htmlFor={nom}>{libelle}</label>
       <div className={classes.controls}>
         <div className={erreur}>
-          {!imageSelectionnee && <p>Aucune image sélectionnée.</p>}
-          {imageSelectionnee && (
+          {!imageSelectionnee && !generationEnCours && (
+            <p>Aucune image sélectionnée.</p>
+          )}
+          {generationEnCours && <div className={classes.loading_animation} />}
+          {imageSelectionnee && !generationEnCours && (
             <Image
               // @ts-ignore
               src={imageSelectionnee}
@@ -89,18 +137,44 @@ export default function SelecteurImage(props: ISelecteurImageProps) {
           className={classes.input}
           type="file"
           id={nom}
-          accept="image/png, image/jpeg"
+          accept="image/png, image/jpeg, image/webp"
           name={nom}
           ref={imageInput}
           onChange={gereChangementImage}
         />
-        <button
-          className={classes.button}
-          type="button"
-          onClick={gereClicSelecteur}
+        <input
+          className={classes.input}
+          type="text"
+          id="imageGeneree"
+          accept="image/png, image/jpeg, image/webp"
+          name="imageGeneree"
+          value={imageGeneree}
+          ref={imageInput}
+        />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            marginBottom: '10px',
+          }}
         >
-          Choisir une image
-        </button>
+          <button
+            className={classes.button}
+            type="button"
+            onClick={gereClicSelecteur}
+          >
+            Choisir une image
+          </button>
+          <button
+            className={classes.button}
+            type="button"
+            onClick={gereClicGenererImage}
+            hidden={!props.inviteGenerateur}
+            disabled={generationEnCours}
+          >
+            Générer une image
+          </button>
+        </Box>
       </div>
     </div>
   );
