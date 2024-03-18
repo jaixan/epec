@@ -22,6 +22,7 @@ export default interface IClasse {
   groupe: number;
   image: string;
   fichierImage?: File;
+  eleves: number[];
 }
 
 /**
@@ -58,4 +59,5 @@ export const classeVide: IClasse = {
   groupe: 1,
   image: '',
   fichierImage: undefined,
+  eleves: [],
 };

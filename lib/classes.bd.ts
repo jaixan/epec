@@ -28,7 +28,10 @@ export async function obtenirClasses(): Promise<IClasse[]> {
 export async function obtenirClasseParId(id: number): Promise<IClasse> {
   await ralentir();
   const stmt = db.prepare('SELECT * FROM classes WHERE id = ?');
-  return stmt.get(id) as IClasse;
+  const classe = stmt.get(id) as IClasse;
+  classe.eleves = obtenirElevesDeLaClasse(id);
+  console.log('classe', classe);
+  return classe;
 }
 
 /**
@@ -95,6 +98,32 @@ export async function modifierClasse(classe: IClasse) {
       classe.id
     );
   }
+
+  mettreAJourElevesDeLaClasse(classe.id!, classe.eleves);
+}
+
+/**
+ * Extrait les identifiants des élèves d'une classe.
+ * @param id
+ * @returns Les identifiants des élèves de la classe.
+ */
+function obtenirElevesDeLaClasse(id: number): number[] {
+  const stmt = db.prepare(
+    'SELECT eleve_id FROM classes_eleves WHERE classe_id = ?'
+  );
+  return stmt.all(id).map((row) => (row as { eleve_id: number }).eleve_id);
+}
+
+function mettreAJourElevesDeLaClasse(id: number, eleves: number[]) {
+  const stmt = db.prepare('DELETE FROM classes_eleves WHERE classe_id = ?');
+  stmt.run(id);
+
+  const stmt2 = db.prepare(
+    'INSERT INTO classes_eleves (classe_id, eleve_id) VALUES (?, ?)'
+  );
+  eleves.forEach((eleve_id) => {
+    stmt2.run(id, eleve_id);
+  });
 }
 
 /**

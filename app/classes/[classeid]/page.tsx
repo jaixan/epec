@@ -16,6 +16,9 @@ import { obtenirClasseParId } from '@/lib/classes.bd';
 import { useEffect, useState } from 'react';
 import BoutonSoumettre from '@/components/bouton_soumettre';
 import SelecteurImage from '@/components/selecteur_image';
+import SelecteurEleves from '@/components/selecteur_eleves';
+import IEleve from '@/models/eleves.models';
+import { obtenirEleves } from '@/lib/eleves.bd';
 
 /**
  * Propriétés de la page de mise à jour des classes.
@@ -95,7 +98,10 @@ export default function PageMiseAJourClasse(props: PageMiseAJourClasseProps) {
   const [groupe, setGroupe] = useState('');
   const [imageUrl, setImageUrl] = useState<string>('');
   const [afficherFormulaire, setAfficherFormulaire] = useState(false);
+  const [eleves, setEleves] = useState<IEleve[]>([]);
+  const [elevesSelectionnes, setElevesSelectionnes] = useState<IEleve[]>([]);
 
+  const id_des_eleves = elevesSelectionnes.map((eleve) => eleve.id).join(',');
   // Générer l'invite pour le générateur d'image seulement si le titre du cours est entré.
   useEffect(() => {
     if (titre === '') {
@@ -111,6 +117,13 @@ export default function PageMiseAJourClasse(props: PageMiseAJourClasseProps) {
     setInviteGenerateur(genererInvite);
   }, [titre]);
 
+  // Obtenir la liste des élèves.
+  useEffect(() => {
+    obtenirEleves().then((eleves) => {
+      setEleves(eleves);
+    });
+  }, []);
+
   // Obtenir la classe par son identifiant.
   useEffect(() => {
     obtenirClasseParId(classeid).then((c) => {
@@ -120,8 +133,15 @@ export default function PageMiseAJourClasse(props: PageMiseAJourClasseProps) {
       setGroupe(c.groupe + '');
       setAfficherFormulaire(true);
       setImageUrl(c.image);
+      console.log('c.eleves', c.eleves);
+      console.log('eleves', eleves);
+      const elevesASelectionner = eleves.filter((eleve) =>
+        c.eleves.includes(eleve.id!)
+      );
+      console.log('elevesASelectionner', elevesASelectionner);
+      setElevesSelectionnes(elevesASelectionner);
     });
-  }, [classeid]);
+  }, [classeid, eleves]);
 
   const [state, formAction] = useFormState(
     mettreAJourClasse,
@@ -142,6 +162,7 @@ export default function PageMiseAJourClasse(props: PageMiseAJourClasseProps) {
         ) : (
           <form className={classes.form} action={formAction}>
             <input type="hidden" name="classeid" value={classeid} />
+            <input type="hidden" name="id_des_eleves" value={id_des_eleves} />
             <Box sx={{ marginBottom: '10px' }}>
               <TextField
                 id="sigle"
@@ -188,9 +209,17 @@ export default function PageMiseAJourClasse(props: PageMiseAJourClasseProps) {
               inviteGenerateur={inviteGenerateur}
               erreur={classeValidation.fichierImage!.length > 0}
             />
+            <SelecteurEleves
+              eleves={eleves}
+              elevesSelectionnes={elevesSelectionnes}
+              onChange={(elevesSelectionnes) =>
+                setElevesSelectionnes(elevesSelectionnes)
+              }
+            />
             <p className={classes.actions}>
               {<BoutonSoumettre label="Modifier une classe" />}
             </p>
+            <p>{elevesSelectionnes.length}</p>
           </form>
         )}
       </main>

@@ -119,6 +119,7 @@ export async function ajouterClasse(
       groupe: groupe!,
       session: session!,
       image: image,
+      eleves: [],
     };
   } else {
     classe = {
@@ -128,6 +129,7 @@ export async function ajouterClasse(
       session: session!,
       image: 'image',
       fichierImage: fichierImage!,
+      eleves: [],
     };
   }
 
@@ -160,6 +162,12 @@ export async function mettreAJourClasse(
   const imageGeneree: string | null = formData.get('imageGeneree') as
     | string
     | null;
+  const id_des_eleves: string | null = formData.get('id_des_eleves') as
+    | string
+    | null;
+
+  console.log('id_des_eleves', id_des_eleves);
+
   const validation: IClasseValidation = estClasseInvalide(
     sigle,
     titre,
@@ -181,6 +189,8 @@ export async function mettreAJourClasse(
     return validation;
   }
 
+  const eleves = id_des_eleves?.split(',').map((id) => +id);
+
   var classe: IClasse;
   const image = imageGeneree || 'image';
   if (imageGeneree) {
@@ -191,6 +201,7 @@ export async function mettreAJourClasse(
       groupe: groupe!,
       session: session!,
       image: image,
+      eleves: eleves!,
     };
   } else {
     classe = {
@@ -201,6 +212,7 @@ export async function mettreAJourClasse(
       session: session!,
       image: image,
       fichierImage: fichierImage!,
+      eleves: eleves!,
     };
   }
 

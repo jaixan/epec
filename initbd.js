@@ -75,6 +75,8 @@ const eleves = [
   },
 ];
 
+console.log('Création de la base de données...');
+console.log('Création de la table eleves...');
 db.prepare(
   `
    CREATE TABLE IF NOT EXISTS eleves (
@@ -87,6 +89,7 @@ db.prepare(
 `
 ).run();
 
+console.log('Création de la table classes...');
 db.prepare(
   `
    CREATE TABLE IF NOT EXISTS classes (
@@ -96,6 +99,18 @@ db.prepare(
        session TEXT NOT NULL,
        groupe INTEGER NOT NULL,
        image TEXT NOT NULL
+    )
+`
+).run();
+
+console.log('Création de la table classes_eleves...');
+db.prepare(
+  `
+   CREATE TABLE IF NOT EXISTS classes_eleves (
+      classe_id INTEGER NOT NULL,
+      eleve_id INTEGER NOT NULL,
+      FOREIGN KEY(classe_id) REFERENCES classes(id),
+      FOREIGN KEY(eleve_id) REFERENCES eleves(id)
     )
 `
 ).run();
