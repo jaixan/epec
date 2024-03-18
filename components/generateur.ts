@@ -15,6 +15,5 @@ export default async function genererImage(props: IGenererImageProps) {
     size: '1024x1024',
   });
   const image_url = response.data[0].url;
-  console.log(image_url);
   return image_url;
 }

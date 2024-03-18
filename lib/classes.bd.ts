@@ -7,9 +7,7 @@
 import IClasse from '@/models/classes.models';
 
 import sql from 'better-sqlite3';
-import fs from 'node:fs';
-import axios from 'axios';
-import { downloadFile } from './telechargement';
+import { ralentir, sauvegardeImage } from './utilitaires';
 
 const db = sql('epec.db');
 
@@ -18,7 +16,7 @@ const db = sql('epec.db');
  * @returns La liste des classes.
  */
 export async function obtenirClasses(): Promise<IClasse[]> {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await ralentir();
   return db.prepare('SELECT * FROM classes').all() as IClasse[];
 }
 
@@ -28,10 +26,9 @@ export async function obtenirClasses(): Promise<IClasse[]> {
  * @returns La classe correspondant à l'identifiant.
  */
 export async function obtenirClasseParId(id: number): Promise<IClasse> {
+  await ralentir();
   const stmt = db.prepare('SELECT * FROM classes WHERE id = ?');
-  return new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-    return stmt.get(id) as IClasse;
-  });
+  return stmt.get(id) as IClasse;
 }
 
 /**
@@ -39,28 +36,14 @@ export async function obtenirClasseParId(id: number): Promise<IClasse> {
  * @param eleve La classe à enregistrer.
  */
 export async function enregistreClasse(classe: IClasse) {
-  if (classe.fichierImage === undefined) {
-    // L'image de la classe vient de la génération d'image
-    const extension = 'png';
-    const nomFichier = `${classe.sigle}-${classe.groupe}-${classe.session}.${extension}`;
-    // Télécharger l'image venant de l'url
-    await downloadFile(classe.image, `public/images/classes/${nomFichier}`);
-    classe.image = `/images/classes/${nomFichier}`;
-  } else {
-    const extension = classe.fichierImage!.name.split('.').pop();
-    const nomFichier = `${classe.sigle}-${classe.groupe}-${classe.session}.${extension}`;
+  // Sauvegarder l'image de la classe
 
-    const stream = fs.createWriteStream(`public/images/classes/${nomFichier}`);
-    const bufferedImage = await classe.fichierImage!.arrayBuffer();
+  classe.image = await sauvegardeImage(
+    `${classe.sigle}-${classe.groupe}-${classe.session}`,
+    classe.image,
+    classe.fichierImage
+  );
 
-    stream.write(Buffer.from(bufferedImage), (error) => {
-      if (error) {
-        throw new Error('La sauvegarde de la photo a échouée!');
-      }
-    });
-
-    classe.image = `/images/classes/${nomFichier}`;
-  }
   const stmt = db.prepare(
     'INSERT INTO classes (sigle, titre, session, groupe, image) VALUES (?, ?, ?, ?, ?)'
   );
@@ -78,16 +61,40 @@ export async function enregistreClasse(classe: IClasse) {
  * @param eleve La classe à enregistrer.
  */
 export async function modifierClasse(classe: IClasse) {
-  const stmt = db.prepare(
-    'UPDATE classes SET sigle = ?, titre = ?, session = ?, groupe = ? WHERE id = ?'
-  );
-  stmt.run(
-    classe.sigle,
-    classe.titre,
-    classe.session,
-    classe.groupe,
-    classe.id
-  );
+  if (
+    classe.image !== 'image' ||
+    (classe.fichierImage && classe.fichierImage.size > 0)
+  ) {
+    // Sauvegarder l'image de la classe
+    classe.image = await sauvegardeImage(
+      `${classe.sigle}-${classe.groupe}-${classe.session}`,
+      classe.image,
+      classe.fichierImage
+    );
+
+    const stmt = db.prepare(
+      'UPDATE classes SET sigle = ?, titre = ?, session = ?, groupe = ?, image = ? WHERE id = ?'
+    );
+    const result = stmt.run(
+      classe.sigle,
+      classe.titre,
+      classe.session,
+      classe.groupe,
+      classe.image,
+      classe.id
+    );
+  } else {
+    const stmt = db.prepare(
+      'UPDATE classes SET sigle = ?, titre = ?, session = ?, groupe = ? WHERE id = ?'
+    );
+    const result = stmt.run(
+      classe.sigle,
+      classe.titre,
+      classe.session,
+      classe.groupe,
+      classe.id
+    );
+  }
 }
 
 /**

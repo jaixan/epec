@@ -8,6 +8,7 @@ import IEleve from '@/models/eleves.models';
 
 import sql from 'better-sqlite3';
 import fs from 'node:fs';
+import { ralentir, sauvegardeImage } from './utilitaires';
 
 const db = sql('epec.db');
 
@@ -16,7 +17,7 @@ const db = sql('epec.db');
  * @returns La liste des élèves.
  */
 export async function obtenirEleves(): Promise<IEleve[]> {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await ralentir();
   return db.prepare('SELECT * FROM eleves').all() as IEleve[];
 }
 
@@ -26,29 +27,22 @@ export async function obtenirEleves(): Promise<IEleve[]> {
  * @returns L'élève correspondant à l'identifiant.
  */
 export async function obtenirEleveParId(id: number): Promise<IEleve> {
+  await ralentir();
   const stmt = db.prepare('SELECT * FROM eleves WHERE id = ?');
-  return new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-    const eleve = stmt.get(id) as IEleve;
-    return eleve;
-  });
+  const eleve = stmt.get(id) as IEleve;
+  return eleve;
 }
 
-export async function enregistrerPhotoEleve(eleve: IEleve) {
-  const extension = eleve.image!.name.split('.').pop();
-  const nomFichier = `${eleve.numero_da}.${extension}`;
-
-  const stream = fs.createWriteStream(`public/images/eleves/${nomFichier}`);
-  const bufferedImage = await eleve.image!.arrayBuffer();
-
-  stream.write(Buffer.from(bufferedImage), (error) => {
-    if (error) {
-      throw new Error('La sauvegarde de la photo a échouée!');
-    }
-  });
-
-  const photo = `/images/eleves/${nomFichier}`;
-  return photo;
+/**
+ * Enregistre la photo de l'élève.
+ * @param eleve
+ * @returns Le chemin de la photo
+ */
+export async function enregistrerPhotoEleve(eleve: IEleve): Promise<string> {
+  // Sauvegarder l'image de l'élève
+  return sauvegardeImage(`${eleve.numero_da}`, eleve.photo, eleve.image);
 }
+
 /**
  * Fonction pour enregistrer un élève.
  * @param eleve L'élève à enregistrer.

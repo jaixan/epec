@@ -1,23 +1,25 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest } from 'next';
 import fs from 'fs';
 import path from 'path';
-import { NextResponse } from 'next/server';
 
-interface IImageGETParams {
-  nomfichier: string;
-}
+// Pour empêcher le cache des images
+export const dynamic = 'force-dynamic';
 
+/**
+ * Fonction pour obtenir une image.
+ * @param req La requête.
+ * @returns La réponse.
+ */
 export function GET(req: NextApiRequest) {
-  console.log(req.url!);
   const { pathname } = new URL(req.url!);
   const nomfichier = pathname.split('/').pop();
-  console.log(nomfichier);
+  const extension = nomfichier!.split('.').pop();
   const filePath = path.resolve('./uploads', nomfichier!);
 
   try {
     const imageBuffer = fs.readFileSync(filePath);
     const res = new Response(imageBuffer);
-    res.headers.set('Content-Type', 'image/png');
+    res.headers.set('Content-Type', `image/${extension}`);
     return res;
   } catch (error) {
     return Response.error();

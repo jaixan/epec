@@ -24,15 +24,22 @@ import { useEffect, useState } from 'react';
 export default function PageAjouterClasse() {
   const [state, formAction] = useFormState(ajouterClasse, classeValidationVide);
   const [inviteGenerateur, setInviteGenerateur] = useState('');
+  const [titreDuCours, setTitreDuCours] = useState('');
 
+  // Générer l'invite pour le générateur d'image seulement si le titre du cours est entré.
   useEffect(() => {
+    if (titreDuCours === '') {
+      setInviteGenerateur('');
+      return;
+    }
+
     const genererInvite =
       'Tu dois générer une image pour représenter une classe ' +
       "dans un logiciel de gestion.L'image peut avoir n'importe quel style, " +
       ' en autant que ça représente le nom de la classe.En aucun cas il y aura ';
-    "du texte dans l'image. Le nom de la classe est : " + 'titre du cours';
+    "du texte dans l'image. Le nom de la classe est : " + titreDuCours;
     setInviteGenerateur(genererInvite);
-  }, []);
+  }, [titreDuCours]);
 
   const classeValidation = state || classeValidationVide;
   return (
@@ -56,6 +63,8 @@ export default function PageAjouterClasse() {
               id="titre"
               label="Titre du cours"
               name="titre"
+              value={titreDuCours}
+              onChange={(e) => setTitreDuCours(e.target.value)}
               error={classeValidation.titre.length > 0}
               helperText={classeValidation.titre}
             />

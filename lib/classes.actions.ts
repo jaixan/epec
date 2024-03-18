@@ -15,14 +15,58 @@ function estTexteInvalide(texte: string | null | undefined) {
   return !texte || texte.trim() === '';
 }
 
-// Fonction pour valider si un numéro DA est invalide.
-function estNumeroDaInvalide(numeroDa: string | null | undefined) {
-  return !numeroDa || numeroDa.trim() === '' || isNaN(+numeroDa);
-}
-
 // Fonction pour valider si un groupe est invalide.
 function estGroupeInvalide(groupe: number | null | undefined) {
   return !groupe || groupe < 1;
+}
+
+/**
+ * Fonction pour valider si une classe est invalide.
+ */
+function estClasseInvalide(
+  sigle: string | null | undefined,
+  titre: string | null | undefined,
+  session: string | null | undefined,
+  groupe: number | null | undefined,
+  image: string | null | undefined,
+  fichierImage: File | null | undefined,
+  imageObligatoire: boolean
+): IClasseValidation {
+  const validation: IClasseValidation = {
+    sigle: '',
+    titre: '',
+    session: '',
+    groupe: '',
+    image: '',
+    fichierImage: '',
+  };
+
+  // Validation du sigle
+  if (estTexteInvalide(sigle)) {
+    validation.sigle = 'Sigle invalide';
+  }
+
+  // Validation du titre
+  if (estTexteInvalide(titre)) {
+    validation.titre = 'Titre invalide';
+  }
+
+  // Validation du groupe
+  if (estGroupeInvalide(groupe)) {
+    validation.groupe = 'Groupe invalide';
+  }
+
+  // Validation de la session
+  if (estTexteInvalide(session)) {
+    validation.session = 'Session invalide';
+  }
+
+  // Validation de l'image
+  if (imageObligatoire && !image && !fichierImage) {
+    validation.image = 'Image invalide';
+  }
+
+  return validation;
 }
 
 /**
@@ -45,20 +89,25 @@ export async function ajouterClasse(
     | string
     | null;
 
+  const validation: IClasseValidation = estClasseInvalide(
+    sigle,
+    titre,
+    session,
+    groupe,
+    imageGeneree,
+    fichierImage,
+    true
+  );
+
+  // Si un champ est invalide, on retourne les messages d'erreurs.
   if (
-    estTexteInvalide(sigle) ||
-    estTexteInvalide(titre) ||
-    estGroupeInvalide(groupe) ||
-    (!fichierImage && !imageGeneree)
+    validation.sigle ||
+    validation.titre ||
+    validation.session ||
+    validation.groupe ||
+    validation.image
   ) {
-    return {
-      sigle: estTexteInvalide(sigle) ? 'Sigle invalide' : '',
-      titre: estTexteInvalide(titre) ? 'Titre invalide' : '',
-      session: estTexteInvalide(session) ? 'Session invalide' : '',
-      groupe: estGroupeInvalide(groupe) ? 'Groupe invalide' : '',
-      image: '',
-      fichierImage: fichierImage!.size === 0 ? 'Image invalide' : '',
-    };
+    return validation;
   }
 
   var classe: IClasse;
@@ -106,29 +155,54 @@ export async function mettreAJourClasse(
   const titre: string | null = formData.get('titre') as string | null;
   const groupe: number | null = formData.get('groupe') as number | null;
   const session: string | null = formData.get('session') as string | null;
-  const fichierImage: File | null = formData.get('image') as File | null;
+  const fichierImage: File | null = formData.get('fichierImage') as File | null;
+  const classeid: string | null = formData.get('classeid') as string | null;
+  const imageGeneree: string | null = formData.get('imageGeneree') as
+    | string
+    | null;
+  const validation: IClasseValidation = estClasseInvalide(
+    sigle,
+    titre,
+    session,
+    groupe,
+    imageGeneree,
+    fichierImage,
+    false
+  );
 
+  // Si un champ est invalide, on retourne les messages d'erreurs.
   if (
-    estTexteInvalide(sigle) ||
-    estTexteInvalide(titre) ||
-    estGroupeInvalide(groupe)
+    validation.sigle ||
+    validation.titre ||
+    validation.session ||
+    validation.groupe ||
+    validation.image
   ) {
-    return {
-      sigle: estNumeroDaInvalide(sigle) ? 'Sigle invalide' : '',
-      titre: estTexteInvalide(titre) ? 'Titre invalide' : '',
-      session: estTexteInvalide(session) ? 'Session invalide' : '',
-      groupe: estGroupeInvalide(groupe) ? 'Groupe invalide' : '',
-      image: '',
-      fichierImage: '',
+    return validation;
+  }
+
+  var classe: IClasse;
+  const image = imageGeneree || 'image';
+  if (imageGeneree) {
+    classe = {
+      id: +classeid!,
+      sigle: sigle!,
+      titre: titre!,
+      groupe: groupe!,
+      session: session!,
+      image: image,
+    };
+  } else {
+    classe = {
+      id: +classeid!,
+      sigle: sigle!,
+      titre: titre!,
+      groupe: groupe!,
+      session: session!,
+      image: image,
+      fichierImage: fichierImage!,
     };
   }
-  const classe: IClasse = {
-    sigle: sigle!,
-    titre: titre!,
-    groupe: groupe!,
-    session: session!,
-    image: 'image',
-  };
 
   await modifierClasse(classe);
 

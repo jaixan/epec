@@ -148,8 +148,7 @@ export default function SelecteurImage(props: ISelecteurImageProps) {
           id="imageGeneree"
           accept="image/png, image/jpeg, image/webp"
           name="imageGeneree"
-          value={imageGeneree}
-          ref={imageInput}
+          defaultValue={imageGeneree}
         />
         <Box
           sx={{

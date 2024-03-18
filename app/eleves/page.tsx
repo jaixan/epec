@@ -18,7 +18,6 @@ import ListeEleves from '@/components/liste_eleves';
  */
 async function Eleves() {
   const eleves = await obtenirEleves();
-  console.log(eleves);
   return <ListeEleves eleves={eleves} />;
 }
 
