@@ -13,7 +13,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Modal,
   Checkbox,
   Table,
   IconButton,
@@ -55,7 +54,6 @@ export default function PagePresences({ params }: PagePresencesProps) {
 
   const [eleves, setEleves] = useState<IEleve[]>([]);
   const [dates, setDates] = useState<Date[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [presences, setPresences] = useState<IPresence[]>([]);
   const [saveMessageOpen, setSaveMessageOpen] = useState(false);
 
