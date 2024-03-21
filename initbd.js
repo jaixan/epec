@@ -115,6 +115,20 @@ db.prepare(
 `
 ).run();
 
+console.log('Création de la table presences...');
+db.prepare(
+  `
+   CREATE TABLE IF NOT EXISTS presences (
+      classe_id INTEGER NOT NULL,
+      eleve_id INTEGER NOT NULL,
+      date_cours DATE NOT NULL,
+      present BOOLEAN NOT NULL,
+      FOREIGN KEY(classe_id) REFERENCES classes(id),
+      FOREIGN KEY(eleve_id) REFERENCES eleves(id)
+    )
+`
+).run();
+
 async function initData() {
   const stmt = db.prepare(`
       INSERT INTO eleves VALUES (

@@ -29,12 +29,6 @@ const elementsDeMenu = [
     titre: 'Élèves',
     lien: '/eleves',
   },
-  {
-    image: '/presences.jpg',
-    alt: 'Prendre les présences',
-    titre: 'Prendre les présences',
-    lien: '/prendre-les-presences',
-  },
 ];
 
 /**

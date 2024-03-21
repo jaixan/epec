@@ -53,12 +53,6 @@ export default function BarreDeMenu() {
     routeur.push('/eleves');
   };
 
-  // Fonction pour aller à la page de prise de présences.
-  const allerAPrendreLesPresences = () => {
-    setAncrageMenuPrincipal(null);
-    routeur.push('/presences');
-  };
-
   // Le backgroundColor est un hack car le AppBar ne réagit pas au thème.
   return (
     <AppBar position="static" sx={{ backgroundColor: themeAppbarBackground }}>
@@ -95,11 +89,6 @@ export default function BarreDeMenu() {
               </MenuItem>
               <MenuItem key="eleves" onClick={allerAuxEleves}>
                 <Typography textAlign="center">Élèves</Typography>
-              </MenuItem>
-              <MenuItem key="presences" onClick={allerAPrendreLesPresences}>
-                <Typography textAlign="center">
-                  Prendre les présences
-                </Typography>
               </MenuItem>
             </Menu>
           </Box>

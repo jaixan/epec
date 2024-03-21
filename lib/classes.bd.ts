@@ -8,6 +8,9 @@ import IClasse from '@/models/classes.models';
 
 import sql from 'better-sqlite3';
 import { ralentir, sauvegardeImage } from './utilitaires';
+import IEleve from '@/models/eleves.models';
+import IPresence from '@/models/presences.models';
+import { now } from 'lodash';
 
 const db = sql('epec.db');
 
@@ -29,7 +32,7 @@ export async function obtenirClasseParId(id: number): Promise<IClasse> {
   await ralentir();
   const stmt = db.prepare('SELECT * FROM classes WHERE id = ?');
   const classe = stmt.get(id) as IClasse;
-  classe.eleves = obtenirElevesDeLaClasse(id);
+  classe.eleves = obtenirIdElevesDeLaClasse(id);
   console.log('classe', classe);
   return classe;
 }
@@ -107,11 +110,23 @@ export async function modifierClasse(classe: IClasse) {
  * @param id
  * @returns Les identifiants des élèves de la classe.
  */
-function obtenirElevesDeLaClasse(id: number): number[] {
+function obtenirIdElevesDeLaClasse(id: number): number[] {
   const stmt = db.prepare(
     'SELECT eleve_id FROM classes_eleves WHERE classe_id = ?'
   );
   return stmt.all(id).map((row) => (row as { eleve_id: number }).eleve_id);
+}
+
+/**
+ * Extrait les élèves d'une classe.
+ * @param id
+ * @returns Les élèves de la classe.
+ */
+export async function obtenirElevesDeLaClasse(id: number) {
+  const stmt = db.prepare(
+    'SELECT eleves.id, eleves.nom, eleves.prenom, eleves.photo FROM classes_eleves INNER JOIN eleves ON eleves.id = classes_eleves.eleve_id WHERE classe_id = ?'
+  );
+  return stmt.all(id) as IEleve[];
 }
 
 function mettreAJourElevesDeLaClasse(id: number, eleves: number[]) {
@@ -133,4 +148,84 @@ function mettreAJourElevesDeLaClasse(id: number, eleves: number[]) {
 export async function supprimerClasse(id: number) {
   const stmt = db.prepare('DELETE FROM classes WHERE id = ?');
   stmt.run(id);
+}
+
+// Récupérer les dates de présence déjà prises
+export async function extraireDatesPresences(classeId: number) {
+  const stmt = db.prepare(
+    'SELECT DISTINCT date_cours FROM presences WHERE classe_id = ? ORDER BY date_cours DESC'
+  );
+  const rows = stmt.all(classeId);
+  const dates = rows.map((row: any) => new Date(row.date_cours));
+  return dates;
+}
+
+// Récupérer les présences déjà prises
+export async function extrairePresences(classeId: number) {
+  const stmt = db.prepare('SELECT * FROM presences WHERE classe_id = ?');
+  const rows = stmt.all(classeId);
+  const presences = rows.map((row: any) => {
+    const presence: IPresence = {
+      classe_id: row.classe_id,
+      eleve_id: row.eleve_id,
+      present: row.present === 1,
+      date_cours: new Date(row.date_cours),
+    };
+    return presence;
+  });
+  return presences;
+}
+
+// Enregistrer les présences
+export async function enregistrerPresences(presences: IPresence[]) {
+  console.log(now(), 'enregistrerPresences');
+  const insertStmt = db.prepare(
+    'INSERT INTO presences (classe_id, eleve_id, date_cours, present) VALUES (?, ?, ?, ?)'
+  );
+  const updateStmt = db.prepare(
+    'UPDATE presences SET present = ? WHERE classe_id = ? AND eleve_id = ? AND date_cours = ?'
+  );
+  presences.forEach((presence) => {
+    const existingPresence = obtenirPresence(
+      presence.classe_id,
+      presence.eleve_id,
+      presence.date_cours
+    );
+    if (existingPresence) {
+      updateStmt.run(
+        presence.present ? 1 : 0,
+        presence.classe_id,
+        presence.eleve_id,
+        presence.date_cours.toISOString()
+      );
+    } else {
+      insertStmt.run(
+        presence.classe_id,
+        presence.eleve_id,
+        presence.date_cours.toISOString(),
+        presence.present ? 1 : 0
+      );
+    }
+  });
+}
+
+function obtenirPresence(
+  classeId: number,
+  eleveId: number,
+  dateCours: Date
+): IPresence | undefined {
+  const stmt = db.prepare(
+    'SELECT * FROM presences WHERE classe_id = ? AND eleve_id = ? AND date_cours = ?'
+  );
+  const row: any = stmt.get(classeId, eleveId, dateCours.toISOString());
+  if (row) {
+    const presence: IPresence = {
+      classe_id: row.classe_id,
+      eleve_id: row.eleve_id,
+      present: row.present === 1,
+      date_cours: new Date(row.date_cours),
+    };
+    return presence;
+  }
+  return undefined;
 }

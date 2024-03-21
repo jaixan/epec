@@ -25,6 +25,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import { supprimerClasseAction } from '@/lib/classes.actions';
 import { useFormState } from 'react-dom';
 import { useState } from 'react';
@@ -191,6 +192,11 @@ export default function ListeClasses(props: IListeClassesProps) {
                       >
                         <DeleteIcon sx={{ fontSize: 30 }} />
                       </IconButton>
+                      <Link href={`/presences/${classe.id}`}>
+                        <IconButton sx={{ justifyContent: 'left' }}>
+                          <EventAvailableIcon sx={{ fontSize: 30 }} />
+                        </IconButton>
+                      </Link>
                     </Box>
                   </Box>
                 </Card>
