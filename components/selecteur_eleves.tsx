@@ -9,6 +9,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import IEleve from '@/models/eleves.models';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 
 interface ISelecteurElevesProps {
   eleves: IEleve[];
@@ -54,6 +56,17 @@ export default function SelecteurEleves(props: ISelecteurElevesProps) {
                 <Avatar src={Eleve.photo} />
               </ListItemAvatar>
               <ListItemText primary={Eleve.prenom + ' ' + Eleve.nom} />
+              <IconButton
+                edge="end"
+                aria-label="retirer de la sélection"
+                onClick={() => {
+                  const nouvelleSelectionEleves =
+                    props.elevesSelectionnes.filter((eleve) => eleve !== Eleve);
+                  props.onChange(nouvelleSelectionEleves);
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </ListItem>
           ))}
         </List>

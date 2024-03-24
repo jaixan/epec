@@ -53,13 +53,16 @@ export async function enregistreClasse(classe: IClasse) {
   const stmt = db.prepare(
     'INSERT INTO classes (sigle, titre, session, groupe, image) VALUES (?, ?, ?, ?, ?)'
   );
-  stmt.run(
+  const result = stmt.run(
     classe.sigle,
     classe.titre,
     classe.session,
     classe.groupe,
     classe.image
   );
+
+  const id = result.lastInsertRowid as number;
+  mettreAJourElevesDeLaClasse(id, classe.eleves);
 }
 
 /**
@@ -130,6 +133,7 @@ export async function obtenirElevesDeLaClasse(id: number) {
 }
 
 function mettreAJourElevesDeLaClasse(id: number, eleves: number[]) {
+  console.log('mettreAJourElevesDeLaClasse', id, eleves);
   const stmt = db.prepare('DELETE FROM classes_eleves WHERE classe_id = ?');
   stmt.run(id);
 

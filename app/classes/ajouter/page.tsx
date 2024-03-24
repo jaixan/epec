@@ -5,43 +5,18 @@
  *
  */
 
-'use client';
-
-import { useFormState } from 'react-dom';
-
-import SelecteurImage from '@/components/selecteur_image';
 import classes from './page.module.css';
 import { ajouterClasse } from '@/lib/classes.actions';
-import BoutonSoumettre from '@/components/bouton_soumettre';
-import { Box, TextField } from '@mui/material';
-import { classeValidationVide } from '@/models/classes.models';
-import { useEffect, useState } from 'react';
+import { classeVide } from '@/models/classes.models';
+import FormulaireClasse from '@/components/formulaire_classe';
+import { obtenirEleves } from '@/lib/eleves.bd';
 
 /**
  * Page pour ajouter une classe.
  * @returns Page pour ajouter une classe (JSX).
  */
-export default function PageAjouterClasse() {
-  const [state, formAction] = useFormState(ajouterClasse, classeValidationVide);
-  const [inviteGenerateur, setInviteGenerateur] = useState('');
-  const [titreDuCours, setTitreDuCours] = useState('');
-
-  // Générer l'invite pour le générateur d'image seulement si le titre du cours est entré.
-  useEffect(() => {
-    if (titreDuCours === '') {
-      setInviteGenerateur('');
-      return;
-    }
-
-    const genererInvite =
-      'Tu dois générer une image pour représenter une classe ' +
-      "dans un logiciel de gestion.L'image peut avoir n'importe quel style, " +
-      ' en autant que ça représente le nom de la classe.En aucun cas il y aura ';
-    "du texte dans l'image. Le nom de la classe est : " + titreDuCours;
-    setInviteGenerateur(genererInvite);
-  }, [titreDuCours]);
-
-  const classeValidation = state || classeValidationVide;
+export default async function PageAjouterClasse() {
+  const eleves = await obtenirEleves();
   return (
     <>
       <header className={classes.header}>
@@ -50,51 +25,11 @@ export default function PageAjouterClasse() {
         </h1>
       </header>
       <main className={classes.main}>
-        <form className={classes.form} action={formAction}>
-          <Box sx={{ marginBottom: '10px' }}>
-            <TextField
-              id="sigle"
-              label="Sigle du cours"
-              name="sigle"
-              error={classeValidation.sigle.length > 0}
-              helperText={classeValidation.sigle}
-            />
-            <TextField
-              id="titre"
-              label="Titre du cours"
-              name="titre"
-              value={titreDuCours}
-              onChange={(e) => setTitreDuCours(e.target.value)}
-              error={classeValidation.titre.length > 0}
-              helperText={classeValidation.titre}
-            />
-          </Box>
-          <Box sx={{ display: 'flex', marginBottom: '10px' }}>
-            <TextField
-              id="session"
-              label="Session du cours"
-              name="session"
-              error={classeValidation.session.length > 0}
-              helperText={classeValidation.session}
-            />
-            <TextField
-              id="groupe"
-              label="Groupe du cours"
-              name="groupe"
-              error={classeValidation.groupe.length > 0}
-              helperText={classeValidation.groupe}
-            />
-          </Box>
-          <SelecteurImage
-            libelle="Image représentant la classe"
-            nom="fichierImage"
-            inviteGenerateur={inviteGenerateur}
-            erreur={classeValidation.fichierImage!.length > 0}
-          />
-          <p className={classes.actions}>
-            {<BoutonSoumettre label="Ajouter une classe" />}
-          </p>
-        </form>
+        <FormulaireClasse
+          formAction={ajouterClasse}
+          donneesInitiales={classeVide}
+          eleves={eleves}
+        />
       </main>
     </>
   );

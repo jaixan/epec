@@ -88,6 +88,9 @@ export async function ajouterClasse(
   const imageGeneree: string | null = formData.get('imageGeneree') as
     | string
     | null;
+  const id_des_eleves: string | null = formData.get('id_des_eleves') as
+    | string
+    | null;
 
   const validation: IClasseValidation = estClasseInvalide(
     sigle,
@@ -112,6 +115,8 @@ export async function ajouterClasse(
 
   var classe: IClasse;
   const image = imageGeneree || 'image';
+  const eleves = id_des_eleves?.split(',').map((id) => +id);
+
   if (imageGeneree) {
     classe = {
       sigle: sigle!,
@@ -119,7 +124,7 @@ export async function ajouterClasse(
       groupe: groupe!,
       session: session!,
       image: image,
-      eleves: [],
+      eleves: eleves!,
     };
   } else {
     classe = {
@@ -129,7 +134,7 @@ export async function ajouterClasse(
       session: session!,
       image: 'image',
       fichierImage: fichierImage!,
-      eleves: [],
+      eleves: eleves!,
     };
   }
 
@@ -150,6 +155,7 @@ export async function ajouterClasse(
  * @returns Un message d'erreur ou rien.
  */
 export async function mettreAJourClasse(
+  classeid: number,
   state: IClasseValidation | void,
   formData: FormData
 ): Promise<IClasseValidation | void> {
@@ -158,7 +164,6 @@ export async function mettreAJourClasse(
   const groupe: number | null = formData.get('groupe') as number | null;
   const session: string | null = formData.get('session') as string | null;
   const fichierImage: File | null = formData.get('fichierImage') as File | null;
-  const classeid: string | null = formData.get('classeid') as string | null;
   const imageGeneree: string | null = formData.get('imageGeneree') as
     | string
     | null;

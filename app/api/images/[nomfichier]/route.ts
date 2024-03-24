@@ -14,7 +14,7 @@ export function GET(req: NextApiRequest) {
   const { pathname } = new URL(req.url!);
   const nomfichier = pathname.split('/').pop();
   const extension = nomfichier!.split('.').pop();
-  const filePath = path.resolve('./uploads', nomfichier!);
+  const filePath = path.join(process.cwd(), 'uploads', nomfichier!);
 
   try {
     const imageBuffer = fs.readFileSync(filePath);

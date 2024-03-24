@@ -73,10 +73,10 @@ export async function ajouterEleve(
  * @returns Un message d'erreur ou rien.
  */
 export async function mettreAJourEleve(
+  eleveId: number,
   state: IEleveValidation | void,
   formData: FormData
 ): Promise<IEleveValidation | void> {
-  const eleveid: string | null = formData.get('eleveId') as string | null;
   const numero_da: string | null = formData.get('numero_da') as string | null;
   const nom: string | null = formData.get('nom') as string | null;
   const prenom: string | null = formData.get('prenom') as string | null;
@@ -96,7 +96,7 @@ export async function mettreAJourEleve(
   }
 
   const eleve: IEleve = {
-    id: +eleveid!,
+    id: eleveId,
     numero_da: +numero_da!,
     nom: nom!,
     prenom: prenom!,
