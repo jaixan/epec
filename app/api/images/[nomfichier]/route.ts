@@ -1,6 +1,6 @@
-import type { NextApiRequest } from 'next';
 import fs from 'fs';
 import path from 'path';
+import { NextRequest } from 'next/server';
 
 // Pour empêcher le cache des images
 export const dynamic = 'force-dynamic';
@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
  * @param req La requête.
  * @returns La réponse.
  */
-export function GET(req: NextApiRequest) {
+export function GET(req: NextRequest) {
   const { pathname } = new URL(req.url!);
   const nomfichier = pathname.split('/').pop();
   const extension = nomfichier!.split('.').pop();

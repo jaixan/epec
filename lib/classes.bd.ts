@@ -137,6 +137,10 @@ function mettreAJourElevesDeLaClasse(id: number, eleves: number[]) {
   const stmt = db.prepare('DELETE FROM classes_eleves WHERE classe_id = ?');
   stmt.run(id);
 
+  if (eleves.length === 0 || eleves[0] === 0) {
+    return;
+  }
+
   const stmt2 = db.prepare(
     'INSERT INTO classes_eleves (classe_id, eleve_id) VALUES (?, ?)'
   );
@@ -150,6 +154,16 @@ function mettreAJourElevesDeLaClasse(id: number, eleves: number[]) {
  * @param id L'identifiant de la classe à supprimer.
  */
 export async function supprimerClasse(id: number) {
+  const stmtDeleteElevesDeLaClasse = db.prepare(
+    'DELETE FROM classes_eleves WHERE classe_id = ?'
+  );
+  stmtDeleteElevesDeLaClasse.run(id);
+
+  const stmtDeletePresencesDeLaClasse = db.prepare(
+    'DELETE FROM presences WHERE classe_id = ?'
+  );
+  stmtDeletePresencesDeLaClasse.run(id);
+
   const stmt = db.prepare('DELETE FROM classes WHERE id = ?');
   stmt.run(id);
 }

@@ -34,6 +34,7 @@ import {
   extrairePresences,
   obtenirElevesDeLaClasse,
 } from '@/lib/classes.bd';
+import Image from 'next/image';
 
 /**
  * Propriétés de la page de mise à jour des présences pour une classe.
@@ -109,6 +110,8 @@ export default function PagePresences({ params }: PagePresencesProps) {
   // Le debounce permet de ne pas appeler la fonction enregistrerPresences trop souvent
   // pour éviter de surcharger la base de données.
   // useCallback permet de ne pas recréer la fonction à chaque rendu.
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedEnregistrerPresences = useCallback(
     debounce(
       (nouvellesPresences) => {
@@ -173,6 +176,7 @@ export default function PagePresences({ params }: PagePresencesProps) {
     fetchEleves();
     fetchDates();
     fetchPresences();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -210,9 +214,10 @@ export default function PagePresences({ params }: PagePresencesProps) {
                 <TableCell>{eleve.nom}</TableCell>
                 <TableCell>{eleve.prenom}</TableCell>
                 <TableCell>
-                  <img
+                  <Image
                     src={eleve.photo}
-                    width="150px"
+                    width="150"
+                    height="150"
                     alt={`${eleve.nom} ${eleve.prenom}`}
                   />
                 </TableCell>
