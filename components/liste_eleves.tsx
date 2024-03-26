@@ -7,7 +7,7 @@
 
 'use client';
 
-import IEleve, { eleveValidationVide } from '@/models/eleves.models';
+import { IEleve, eleveValidationVide } from '@/models/eleves.models';
 import Image from 'next/image';
 import Link from 'next/link';
 import {

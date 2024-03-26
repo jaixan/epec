@@ -16,7 +16,7 @@ import FormulaireClasse from '@/components/formulaire_classe';
  */
 interface PageMiseAJourClasseProps {
   params: {
-    classeid: string;
+    classeId: string;
   };
 }
 
@@ -27,12 +27,12 @@ interface PageMiseAJourClasseProps {
 export default async function PageMiseAJourClasse(
   props: PageMiseAJourClasseProps
 ) {
-  const classeid = +props.params.classeid;
+  const classeId = +props.params.classeId;
 
-  var classe = await obtenirClasseParId(classeid);
+  var classe = await obtenirClasseParId(classeId);
   var eleves = await obtenirEleves();
 
-  const actionMettreAJourClasse = mettreAJourClasse.bind(null, classeid);
+  const actionMettreAJourClasse = mettreAJourClasse.bind(null, classeId);
   return (
     <>
       <header className={classes.header}>

@@ -12,11 +12,11 @@ import { useFormState } from 'react-dom';
 
 import classes from './formulaire.module.css';
 import { Box, TextField } from '@mui/material';
-import IClasse, { classeValidationVide } from '@/models/classes.models';
+import { IClasse, classeValidationVide } from '@/models/classes.models';
 import BoutonSoumettre from '@/components/bouton_soumettre';
 import SelecteurImage from '@/components/selecteur_image';
 import SelecteurEleves from '@/components/selecteur_eleves';
-import IEleve from '@/models/eleves.models';
+import { IEleve } from '@/models/eleves.models';
 import { useEffect, useState } from 'react';
 
 /**

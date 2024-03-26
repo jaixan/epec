@@ -8,7 +8,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
-import IEleve from '@/models/eleves.models';
+import { IEleve } from '@/models/eleves.models';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
 

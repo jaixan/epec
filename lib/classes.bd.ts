@@ -4,12 +4,12 @@
  *
  * Auteur : Étienne Rivard
  */
-import IClasse from '@/models/classes.models';
+import { IClasse } from '@/models/classes.models';
 
 import sql from 'better-sqlite3';
 import { ralentir, sauvegardeImage } from './utilitaires';
-import IEleve from '@/models/eleves.models';
-import IPresence from '@/models/presences.models';
+import { IEleve } from '@/models/eleves.models';
+import { IPresence } from '@/models/presences.models';
 import { now } from 'lodash';
 
 const db = sql('epec.db');

@@ -26,8 +26,8 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import IEleve from '@/models/eleves.models';
-import IPresence from '@/models/presences.models';
+import { IEleve } from '@/models/eleves.models';
+import { IPresence } from '@/models/presences.models';
 import {
   enregistrerPresences,
   extraireDatesPresences,

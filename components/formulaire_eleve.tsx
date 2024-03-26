@@ -10,7 +10,7 @@ import { useFormState } from 'react-dom';
 
 import classes from './formulaire.module.css';
 import { Box, TextField } from '@mui/material';
-import IEleve, { eleveValidationVide } from '@/models/eleves.models';
+import { IEleve, eleveValidationVide } from '@/models/eleves.models';
 import BoutonSoumettre from '@/components/bouton_soumettre';
 import SelecteurImage from '@/components/selecteur_image';
 

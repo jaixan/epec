@@ -19,6 +19,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { themeAppbarBackground } from '@/theme';
+import { Button } from '@mui/material';
+import { deconnecterUtilisateur } from '@/lib/auth.actions';
 
 /**
  * Composant pour la barre de menu.
@@ -132,6 +134,11 @@ export default function BarreDeMenu() {
             EPEC
           </Typography>
           <Box sx={{ flexGrow: 0, display: { md: 'flex' } }}></Box>
+          <Box sx={{ flexGrow: 0, display: { md: 'flex' } }}>
+            <Button color="inherit" onClick={() => deconnecterUtilisateur()}>
+              Déconnecter
+            </Button>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

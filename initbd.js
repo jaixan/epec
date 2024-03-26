@@ -1,3 +1,5 @@
+bcrypt = require('bcrypt');
+
 /**
  * Créer une base de données SQLite avec des données bidons
  *
@@ -129,6 +131,17 @@ db.prepare(
 `
 ).run();
 
+console.log('Création de la table utilisateurs...');
+db.prepare(
+  `
+   CREATE TABLE IF NOT EXISTS utilisateurs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      courriel TEXT NOT NULL,
+      motdepasse TEXT NOT NULL
+    )
+`
+).run();
+
 async function initData() {
   const stmt = db.prepare(`
       INSERT INTO eleves VALUES (
@@ -145,5 +158,24 @@ async function initData() {
   }
 }
 
-initData();
+async function initUtilisateur() {
+  const stmt = db.prepare(`
+      INSERT INTO utilisateurs VALUES (
+          null,
+         @courriel,
+         @motdepasse
+      )
+   `);
+
+  console.log("Création de l'utilisateur initial...");
+  console.log(process.env.UTILISATEUR_INITIAL);
+  const utilisateurInitial = {
+    courriel: process.env.UTILISATEUR_INITIAL,
+    motdepasse: bcrypt.hashSync(process.env.MOTDEPASSE_INITIAL, 10),
+  };
+  stmt.run(utilisateurInitial);
+}
+
+//initData();
+initUtilisateur();
 console.log('Base de données créée avec succès!');

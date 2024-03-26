@@ -1,6 +1,6 @@
 'use server';
 
-import IClasse, { IClasseValidation } from '@/models/classes.models';
+import { IClasse, IClasseValidation } from '@/models/classes.models';
 import {
   enregistreClasse,
   modifierClasse,

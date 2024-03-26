@@ -4,10 +4,9 @@
  *
  * Auteur : Étienne Rivard
  */
-import IEleve from '@/models/eleves.models';
+import { IEleve } from '@/models/eleves.models';
 
 import sql from 'better-sqlite3';
-import fs from 'node:fs';
 import { ralentir, sauvegardeImage } from './utilitaires';
 
 const db = sql('epec.db');

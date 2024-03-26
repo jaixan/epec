@@ -5,7 +5,7 @@
  */
 
 /**
- * Interface pour les élèves.
+ * Type pour les élèves.
  * @param id L'identifiant de l'élève.
  * @param numero_da Le numéro DA de l'élève.
  * @param nom Le nom de l'élève.
@@ -13,25 +13,25 @@
  * @param photo Le chemin de la photo de l'élève.
  * @param image L'image de l'élève.
  */
-export default interface IEleve {
+export type IEleve = {
   id?: number;
   numero_da: number;
   nom: string;
   prenom: string;
   photo: string;
   image?: File;
-}
+};
 
 /**
- * Modèle de données pour les messages de validation pour les élèves.
+ * Type de données pour les messages de validation pour les élèves.
  */
-export interface IEleveValidation {
+export type IEleveValidation = {
   numero_da: string;
   nom: string;
   prenom: string;
   photo: string;
   image?: string;
-}
+};
 
 /**
  * Messages vides de validation pour les élèves.

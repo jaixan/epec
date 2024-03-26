@@ -7,7 +7,7 @@
 
 'use client';
 
-import IClasse, { classeValidationVide } from '@/models/classes.models';
+import { IClasse, classeValidationVide } from '@/models/classes.models';
 import Image from 'next/image';
 import Link from 'next/link';
 import {

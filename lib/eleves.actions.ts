@@ -1,6 +1,6 @@
 'use server';
 
-import IEleve, { IEleveValidation } from '@/models/eleves.models';
+import { IEleve, IEleveValidation } from '@/models/eleves.models';
 import { enregistreEleve, modifierEleve, supprimerEleve } from './eleves.bd';
 
 import { redirect } from 'next/navigation';
